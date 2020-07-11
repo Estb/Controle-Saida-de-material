@@ -17,10 +17,6 @@ const Requisitions = database.define('requisitions', {
         len: [2, 255]
     }
   },
-  author: {
-    allowNull: false,
-    type: Sequelize.STRING(40),
-  },
   description: {
     allowNull: false,
     type: Sequelize.STRING(255),
@@ -37,52 +33,87 @@ const Requisitions = database.define('requisitions', {
   },
   mreturn:{
     allowNull: false,
-    type: Sequelize.INTEGER
+    type: Sequelize.BOOLEAN
   },
   date_return:{
     allowNull:true,
     type:Sequelize.DATE
   },
-  auditor_out:{
+  date_out:{
+    allowNull:true,
+    type:Sequelize.DATE
+  },
+  security_out:{
     allowNull: true,
     type: Sequelize.STRING(40),
     validate: {
-        len: [2, 40]
+        len: [1, 40]
     }
   },
-  auditor_return:{
+  already_out:{
+    allowNull: true,
+    type: Sequelize.BOOLEAN
+  },
+  date_in:{
+    allowNull:true,
+    type:Sequelize.DATE
+  },
+  security_in:{
     allowNull: true,
     type: Sequelize.STRING(40),
     validate: {
-        len: [2, 40]
+        len: [1, 40]
     }
   },
-  autorize1_by:{
+  already_in:{
     allowNull: true,
-    type: Sequelize.STRING(40),
-    validate: {
-        len: [2, 40]
-    }
+    type: Sequelize.BOOLEAN
   },
-  autorize2_by:{
+  authorize1_by:{
     allowNull: true,
-    type: Sequelize.STRING(40),
-    validate: {
-        len: [2, 40]
-    }
+    type: Sequelize.INTEGER,
   },
-  autorize3_by:{
+  date_authorize1:{
+    allowNull:true,
+    type:Sequelize.DATE
+  },
+  authorize2_by:{
     allowNull: true,
-    type: Sequelize.STRING(40),
-    validate: {
-        len: [2, 40]
-    }
+    type: Sequelize.INTEGER,
+  },
+  date_authorize2:{
+    allowNull:true,
+    type:Sequelize.DATE
+  },
+  authorize3_by:{
+    allowNull: true,
+    type: Sequelize.INTEGER,
+  },
+  date_authorize3:{
+    allowNull:true,
+    type:Sequelize.DATE
   },
   authorized:{
     allowNull: false,
     type: Sequelize.BOOLEAN,
-    defaultValue: 0
-  }
-})
+    defaultValue: false
+  },
+  already_audited:{
+    allowNull: true,
+    type: Sequelize.BOOLEAN
+  },
+  audited_by:{
+    allowNull: true,
+    type: Sequelize.STRING(40),
+    validate: {
+        len: [1, 40]
+    }
+  },
+  date_audited:{
+    allowNull:true,
+    type:Sequelize.DATE
+  },
+}, {underscored: true})
 
 module.exports = Requisitions
+

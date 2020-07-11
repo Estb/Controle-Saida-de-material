@@ -1,6 +1,6 @@
 const Sequelize = require('sequelize')
 const database = require('../database/database')
-
+const Requisitions = require('./Requisitions')
 
 const Users = database.define('users', {
 
@@ -56,13 +56,28 @@ const Users = database.define('users', {
         len: [2, 40]
     }
   },
+  level:{
+    allowNull: false,
+    type: Sequelize.INTEGER,
+  },
+  isAuditor:{
+    allowNull: false,
+    type: Sequelize.BOOLEAN,
+    defaultValue: false
+  },
+  isSecurity:{
+    allowNull: false,
+    type: Sequelize.BOOLEAN,
+    defaultValue: false
+  },
   isAdmin:{
-    allowNull: true,
-    type: Sequelize.STRING(40),
-    validate: {
-        len: [2, 40]
-    }
+    allowNull: false,
+    type: Sequelize.BOOLEAN,
+    defaultValue: false
   }
-})
+}, {underscored: true})
+
+Users.hasMany(Requisitions); // Will add userId to Task model
+Requisitions.belongsTo(Users); // Will also add userId to Task model
 
 module.exports = Users

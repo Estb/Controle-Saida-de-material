@@ -5,36 +5,6 @@ const jwt = require('jsonwebtoken')
 const Models = require('../models/Users')
 
 
-exports.login = (request, response, next) => {
-
-  const username = request.body.username
-  const password = request.body.password
-
-  if(username && password ) {
-    Models.find({username})
-    .then(user => {
-      if(!user) {
-        response.json({sucess: false, message: 'This username no exist'})
-      } else {
-        bcrypt.compare(password, user.password, (err, result) => {
-          if (result==true){       
-            const id2 = user.id   
-            const token = jwt.sign({ id2 }, jwtConfig.secret, {
-              expiresIn: 300 // expires in 5min
-            });
-            response.status(200).send({ auth: true, token: token, id:id2});
-          } else {
-            response.json({sucess: false, message: 'Incorrect password'})
-          }
-        })  
-      }
-    })
-    .catch((error) => next(error))
-  } else {
-    response.json({sucess: false, message:'Username and password fields are requireds', statusCode: 400})
-  }
-}
-
 exports.createUser = (request, response, next ) => {
 
   const username = request.body.username
@@ -45,7 +15,8 @@ exports.createUser = (request, response, next ) => {
   const lastname =  request.body.lastname
   const department =  request.body.department
   const role =  request.body.role
-  const isAdmin =  0
+  //const isAdmin =  0
+  const level = 0
 
   if(username && password ) {
     if(password && password2 == password){
@@ -66,7 +37,7 @@ exports.createUser = (request, response, next ) => {
               lastname: lastname,
               department:department,
               role:role,
-              isAdmin:isAdmin  
+              level:level
             })
             .then(()=> {response.status(201).send()})
             .catch((error) => next(error))
@@ -79,5 +50,39 @@ exports.createUser = (request, response, next ) => {
     }
   } else {
     response.json({sucess: false, message:'Username and password fields are requireds', statusCode: 400})
+  }
+}
+
+
+
+exports.login = (req, res, next) => {
+
+  const username = req.body.username
+  const password = req.body.password
+
+  if(username && password ) {
+    Models.findOne({username, where: {username:username}})
+    .then(user => {
+      if(!user) {
+        res.json({sucess: false, message: 'This username no exist'})
+      } else {
+        bcrypt.compare(password, user.password, (err, result) => {
+          if (result==true){ 
+            const id = user.id 
+            const level = user.level
+            const security = user.isSecurity
+            const token = jwt.sign({ id, level, security}, jwtConfig.secret, {
+              expiresIn: 3000 // expires in 50min
+            });
+            res.status(200).send({ auth: true, token: token, id:id, level: level});
+          } else {
+            res.json({sucess: false, message: 'Incorrect password'})
+          }
+        })  
+      }
+    })
+    .catch((error) => next(error))
+  } else {
+    res.json({sucess: false, message:'Username and password fields are requireds', statusCode: 400})
   }
 }
