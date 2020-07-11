@@ -1,6 +1,6 @@
 const Sequelize = require('sequelize')
 const database = require('../database/database')
-
+const Materials = require('./Materials')
 
 const Requisitions = database.define('requisitions', {
 
@@ -11,13 +11,6 @@ const Requisitions = database.define('requisitions', {
     type: Sequelize.INTEGER
   },
     title:{
-    allowNull: false,
-    type: Sequelize.STRING(255),
-    validate: {
-        len: [2, 255]
-    }
-  },
-  description: {
     allowNull: false,
     type: Sequelize.STRING(255),
     validate: {
@@ -117,3 +110,5 @@ const Requisitions = database.define('requisitions', {
 
 module.exports = Requisitions
 
+Requisitions.hasMany(Materials); // Will add userId to Task model
+Materials.belongsTo(Requisitions); // Will also add userId to Task model

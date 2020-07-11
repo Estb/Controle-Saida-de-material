@@ -1,4 +1,5 @@
 const Models = require("../models/Requisitions");
+const Material = require("../models/Materials")
 const Status = require("http-status");
 const controller = require("./index");
 
@@ -50,18 +51,37 @@ exports.create = (req, res, next) => {
   const authorized = 0;
   const id = req.userId;
 
+  var materials = []
+  materials = req.body.material;
+
+
   Models.create({
     title: title,
     author: author,
-    description: description,
     reason: reason,
     mreturn: mreturn,
     authorized: authorized,
     date_return: date_return,
     user_id: id
   })
-    .then(() => {
-      res.status(201).send();
+    .then(requisition => {
+      const itens = materials.map(item => ({...item, requisition_id:requisition.id}))
+
+      console.log(requisition.id)
+      console.log(itens)
+
+      Material.bulkCreate(
+        itens
+      )
+      .then(()=>{
+        res.status(201)
+        .json({
+          sucess: true,
+          menssage: "Successful create requisition",
+          statusCode: 201
+        });
+      })
+      .catch(error => next(error));
     })
     .catch(error => next(error));
 };
@@ -162,7 +182,6 @@ exports.update = (req, res, next) => {
   const id = req.params.id;
   const title = req.body.title;
   const author = req.body.author;
-  const description = req.body.description;
   const reason = req.body.reason;
   const mreturn = req.body.mreturn;
   const date_return = today();

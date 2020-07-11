@@ -71,10 +71,12 @@ exports.login = (req, res, next) => {
             const id = user.id 
             const level = user.level
             const security = user.isSecurity
+            const name = user.name
+            const email = user.mail
             const token = jwt.sign({ id, level, security}, jwtConfig.secret, {
               expiresIn: 3000 // expires in 50min
             });
-            res.status(200).send({ auth: true, token: token, id:id, level: level});
+            res.status(200).send({ auth: true, token: token, id:id, level: level, name:name, email:email});
           } else {
             res.json({sucess: false, message: 'Incorrect password'})
           }
